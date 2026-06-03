@@ -1,6 +1,7 @@
 from ultralytics import YOLO
 import cv2
 import json
+import requests
 
 # Load YOLO model
 model = YOLO("yolov8n.pt")
@@ -36,14 +37,28 @@ while True:
         status = "Moderately Crowded"
     else:
         status = "Highly Crowded"
+
+    # Save locally
     data = {
-    "people_count": people_count,
-    "status": status
+        "people_count": people_count,
+        "status": status
     }
 
     with open("backend/live_data.json", "w") as f:
         json.dump(data, f)
-    
+
+    # Send to Render Backend
+    try:
+        requests.post(
+            "https://ai-space-intelligence-dashboard.onrender.com/update-count",
+            json={
+                "people_count": people_count,
+                "status": status
+            },
+            timeout=5
+        )
+    except Exception as e:
+        print("API Error:", e)
 
     # Draw detection boxes
     frame = results[0].plot()
