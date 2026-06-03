@@ -13,7 +13,7 @@ function App() {
 
   const fetchData = async () => {
     try {
-      const response = await fetch("http://127.0.0.1:8000/occupancy");
+      const response = await fetch("https://ai-space-intelligence-dashboard.onrender.com/occupancy");
       const result = await response.json();
       setData(result);
     } catch (error) {
